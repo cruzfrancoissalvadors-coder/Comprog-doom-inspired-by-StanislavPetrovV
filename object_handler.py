@@ -19,8 +19,8 @@ class ObjectHandler:
         # spawn npc
         level = game.level  # harder stages: more enemies, tougher mix
         self.enemies = 8 + 4 * level  # npc count
-        self.npc_types = [SoldierNPC, CacoDemonNPC, CyberDemonNPC]
-        self.weights = [80 - 10 * level, 15 + 3 * level, 5 + 4 * level]
+        self.npc_types = [LuminoxNPC, VoltergeistNPC, ResistonatorNPC]
+        self.weights = [50 - 10 * level, 30 + 3 * level, 20 + 4 * level]
         self.restricted_area = {(i, j) for i in range(10) for j in range(10)}
         self.spawn_npc()
         self.assign_parts()

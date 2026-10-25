@@ -1,4 +1,5 @@
 import pygame as pg
+from collections import Counter
 from settings import *
 from quiz import STAGES, FONT_NAMES
 from components import get_part_icon
@@ -66,11 +67,14 @@ class ObjectRenderer:
 
     def draw_parts_row(self, y):
         game = self.game
-        parts, size, gap = game.circuit['parts'], 56, 10
+        parts = game.circuit['parts']
+        size, gap = (56, 10) if len(parts) <= 8 else (44, 6)
         x0 = WIDTH - 20 - len(parts) * (size + gap) + gap
+        seen = Counter()
         for i, kind in enumerate(parts):
+            seen[kind] += 1
             rect = pg.Rect(x0 + i * (size + gap), y + 6, size, size)
-            got = kind in game.inventory
+            got = game.inventory[kind] >= seen[kind]
             pg.draw.rect(self.screen, (20, 12, 30), rect, border_radius=8)
             self.screen.blit(get_part_icon(kind, size, dim=not got), rect)
             pg.draw.rect(self.screen, (120, 230, 120) if got else (110, 90, 130), rect, 2, border_radius=8)
@@ -82,7 +86,7 @@ class ObjectRenderer:
         if game.has_all_parts():
             text, color = 'Press E to use the breadboard table', (160, 255, 160)
         else:
-            count = f'{len(game.inventory)}/{len(game.circuit["parts"])}'
+            count = f'{sum(game.inventory.values())}/{len(game.circuit["parts"])}'
             text, color = f'Collect all the parts first ({count})', (255, 230, 120)
         self.draw_text(text, HALF_WIDTH, 200, self.hud_font, color, center=True)
 

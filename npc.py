@@ -3,7 +3,7 @@ from random import randint, random
 
 
 class NPC(AnimatedSprite):
-    def __init__(self, game, path='resources/sprites/npc/soldier/0.png', pos=(10.5, 5.5),
+    def __init__(self, game, path='resources/sprites/npc/Luminox/0.png', pos=(10.5, 5.5),
                  scale=0.6, shift=0.38, animation_time=180):
         super().__init__(game, path, pos, scale, shift, animation_time)
         self.attack_images = self.get_images(self.path + '/attack')
@@ -15,11 +15,11 @@ class NPC(AnimatedSprite):
         self.attack_dist = randint(3, 6)
         self.speed = 0.03
         self.size = 20
-        self.health = 100
+        self.health = 10
         self.attack_damage = 10
         self.accuracy = 0.15
         self.alive = True
-        self.carries = None  # circuit part dropped on death (set by ObjectHandler)
+        self.carries = None
         self.pain = False
         self.ray_cast_value = False
         self.frame_counter = 0
@@ -44,7 +44,6 @@ class NPC(AnimatedSprite):
         next_pos = self.game.pathfinding.get_path(self.map_pos, self.game.player.map_pos)
         next_x, next_y = next_pos
 
-        # pg.draw.rect(self.game.screen, 'blue', (100 * next_x, 100 * next_y, 100, 100))
         if next_pos not in self.game.object_handler.npc_positions:
             angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
             dx = math.cos(angle) * self.speed
@@ -132,7 +131,6 @@ class NPC(AnimatedSprite):
         sin_a = math.sin(ray_angle)
         cos_a = math.cos(ray_angle)
 
-        # horizontals
         y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-6, -1)
 
         depth_hor = (y_hor - oy) / sin_a
@@ -153,7 +151,6 @@ class NPC(AnimatedSprite):
             y_hor += dy
             depth_hor += delta_depth
 
-        # verticals
         x_vert, dx = (x_map + 1, 1) if cos_a > 0 else (x_map - 1e-6, -1)
 
         depth_vert = (x_vert - ox) / cos_a
@@ -188,13 +185,13 @@ class NPC(AnimatedSprite):
                          (100 * self.x, 100 * self.y), 2)
 
 
-class SoldierNPC(NPC):
-    def __init__(self, game, path='resources/sprites/npc/soldier/0.png', pos=(10.5, 5.5),
+class LuminoxNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/Luminox/0.png', pos=(10.5, 5.5),
                  scale=0.6, shift=0.38, animation_time=180):
         super().__init__(game, path, pos, scale, shift, animation_time)
 
-class CacoDemonNPC(NPC):
-    def __init__(self, game, path='resources/sprites/npc/caco_demon/0.png', pos=(10.5, 6.5),
+class VoltergeistNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/Voltergeist/0.png', pos=(10.5, 6.5),
                  scale=0.7, shift=0.27, animation_time=250):
         super().__init__(game, path, pos, scale, shift, animation_time)
         self.attack_dist = 1.0
@@ -203,8 +200,8 @@ class CacoDemonNPC(NPC):
         self.speed = 0.05
         self.accuracy = 0.35
 
-class CyberDemonNPC(NPC):
-    def __init__(self, game, path='resources/sprites/npc/cyber_demon/0.png', pos=(11.5, 6.0),
+class ResistonatorNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/Resistonator/0.png', pos=(11.5, 6.0),
                  scale=1.0, shift=0.04, animation_time=210):
         super().__init__(game, path, pos, scale, shift, animation_time)
         self.attack_dist = 6

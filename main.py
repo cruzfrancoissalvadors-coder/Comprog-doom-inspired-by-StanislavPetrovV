@@ -1,16 +1,11 @@
-import pygame as pg
-import sys
-from settings import *
 from map import *
 from player import *
 from raycasting import *
 from object_renderer import *
-from sprite_object import *
 from object_handler import *
 from weapon import *
 from sound import *
 from pathfinding import *
-from quiz import *
 from components import *
 from screens import *
 from breadboard import *
@@ -25,23 +20,22 @@ class Game:
         self.global_trigger = False
         self.global_event = pg.USEREVENT + 0
         pg.time.set_timer(self.global_event, 40)
-        self.level = 0  # current stage (index into quiz.STAGES), kept across new_game()
+        self.level = 0
         self.score = 0
-        self.inventory = set()  # parts collected in this stage
+        self.inventory = Counter()
         self.circuit = CIRCUITS[0]
         self.toast_text, self.toast_until = '', 0
-        self.state = 'MENU'  # MENU, INSTRUCTIONS, PLAYING, BREADBOARD or QUIZ
+        self.state = 'MENU'
         self.quiz = QuizScreen(self)
         self.menu = MenuScreen(self)
         self.instructions = InstructionsScreen(self)
         self.breadboard = BreadboardScreen(self)
-        # states that are full-screen menus instead of the 3D world
         self.screens = {'MENU': self.menu, 'INSTRUCTIONS': self.instructions,
                         'BREADBOARD': self.breadboard, 'QUIZ': self.quiz}
         self.new_game('MENU')
 
     def new_game(self, state='INSTRUCTIONS'):
-        self.inventory = set()
+        self.inventory = Counter()
         self.circuit = CIRCUITS[self.level % len(CIRCUITS)]
         self.map = Map(self)
         self.player = Player(self)
@@ -57,32 +51,28 @@ class Game:
     def set_state(self, state):
         self.state = state
         playing = state == 'PLAYING'
-        # first-person mode hides and grabs the mouse; every menu screen frees it
         pg.mouse.set_visible(not playing)
         pg.event.set_grab(playing)
         if playing:
             pg.mouse.set_pos(HALF_WIDTH, HALF_HEIGHT)
-            pg.mouse.get_rel()  # discard mouse movement made during the menus
+            pg.mouse.get_rel()
 
     def restart_run(self):
-        # called after dying, a wrong answer, or graduating: back to the home page
         self.level = 0
         self.score = 0
         self.new_game('MENU')
 
     def start_run(self):
-        # START GAME on the home page
         self.set_state('INSTRUCTIONS')
 
     def begin_stage(self):
-        # START on the instructions pop-up
         self.set_state('PLAYING')
 
     def toast(self, text, seconds=2):
         self.toast_text, self.toast_until = text, pg.time.get_ticks() + int(seconds * 1000)
 
     def has_all_parts(self):
-        return set(self.circuit['parts']) <= self.inventory
+        return all(self.inventory[k] >= n for k, n in Counter(self.circuit['parts']).items())
 
     def open_breadboard(self):
         self.set_state('BREADBOARD')

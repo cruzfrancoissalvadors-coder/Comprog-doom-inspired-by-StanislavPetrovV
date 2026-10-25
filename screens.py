@@ -1,5 +1,5 @@
 import sys
-import math
+from collections import Counter
 import pygame as pg
 from settings import *
 from quiz import QuizScreen, FONT_NAMES, STAGES
@@ -70,7 +70,7 @@ class MenuScreen:
         screen.blit(glow, (HALF_WIDTH - 100, 40))
         pg.draw.circle(screen, (240, 60, 60), (HALF_WIDTH, 140), 28)
 
-        blit_center(screen, self.huge_font.render('ECE RISE TO THE TOP', True, GOLD), 250)
+        blit_center(screen, self.huge_font.render('ELECTROQUEST', True, GOLD), 250)
         blit_center(screen, self.body_font.render('Shoot. Collect parts. Build the circuit. Pass the boards.',
                                                   True, LILAC), 380)
         self.start_btn.draw(screen, self.body_font)
@@ -122,18 +122,27 @@ class InstructionsScreen:
                 screen.blit(self.small_font.render(line, True, LILAC), (x, y))
                 y += 32
 
-        # parts you need to find
-        parts = game.circuit['parts']
+        # tip for this stage
+        for line in QuizScreen.wrap('TIP: ' + game.circuit['hint'], self.tiny_font, width)[:2]:
+            screen.blit(self.tiny_font.render(line, True, GOLD), (x, y + 6))
+            y += 26
+
+        # parts you need to find (decoys may be among them)
+        counts = Counter(game.circuit['parts'])
         y = max(y + 14, 520)
-        slot_w = width // len(parts)
-        for i, kind in enumerate(parts):
+        slot_w = width // len(counts)
+        for i, (kind, n) in enumerate(counts.items()):
             cx = x + slot_w * i + slot_w // 2
-            icon = get_part_icon(kind, 110)
-            screen.blit(icon, (cx - 55, y))
-            label = self.tiny_font.render(PART_NAMES[kind], True, 'white')
-            screen.blit(label, (cx - label.get_width() // 2, y + 112))
+            screen.blit(get_part_icon(kind, 84), (cx - 42, y))
+            name = PART_NAMES[kind]
+            lines = [name.split(' (')[0], '(' + name.split(' (')[1]] if ' (' in name else name.split(' ', 1)
+            if n > 1:
+                lines[0] += f' x{n}'
+            for j, line in enumerate(lines):
+                label = self.tiny_font.render(line, True, 'white')
+                screen.blit(label, (cx - label.get_width() // 2, y + 86 + j * 22))
 
         controls = 'WASD move   Mouse aim   Click shoot   E use table   Esc quit'
-        blit_center(screen, self.tiny_font.render(controls, True, LILAC), 700)
+        blit_center(screen, self.tiny_font.render(controls, True, LILAC), 715)
         self.start_btn.draw(screen, self.body_font)
 
