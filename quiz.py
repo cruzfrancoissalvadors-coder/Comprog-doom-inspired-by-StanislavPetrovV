@@ -3,7 +3,7 @@ from settings import *
 
 FONT_NAMES = 'couriernew,courier,monospace'
 
-# One question per stage. Clear every enemy in a stage to face its "major" exam.
+
 STAGES = [
     {
         'name': 'Stage 1: Physics 2',
@@ -65,14 +65,13 @@ class QuizScreen:
         self.stage = STAGES[0]
         self.buttons = []
         self.picked = None
-        self.result = None  # None while waiting for an answer, then True / False
+        self.result = None
         self.locked_until = 0
 
     def start(self):
         self.stage = STAGES[self.game.level]
         self.picked = None
         self.result = None
-        # ignore clicks for a moment so a shotgun click can't answer by accident
         self.locked_until = pg.time.get_ticks() + 800
         btn_w, btn_h, gap = 1200, 80, 22
         x, y0 = HALF_WIDTH - btn_w // 2, 430

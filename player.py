@@ -11,10 +11,9 @@ class Player:
         self.shot = False
         self.health = PLAYER_MAX_HEALTH
         self.rel = 0
-        self.pitch = 0  # vertical look: >0 looks up (horizon moves down), in pixels
+        self.pitch = 0
         self.health_recovery_delay = 300
         self.time_prev = pg.time.get_ticks()
-        # diagonal movement correction
         self.diag_move_corr = 1 / math.sqrt(2)
 
     def recover_health(self):
@@ -82,10 +81,6 @@ class Player:
 
         self.check_wall_collision(dx, dy)
 
-        # if keys[pg.K_LEFT]:
-        #     self.angle -= PLAYER_ROT_SPEED * self.game.delta_time
-        # if keys[pg.K_RIGHT]:
-        #     self.angle += PLAYER_ROT_SPEED * self.game.delta_time
         self.angle %= math.tau
 
     def check_wall(self, x, y):

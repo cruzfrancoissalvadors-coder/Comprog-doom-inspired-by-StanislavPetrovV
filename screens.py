@@ -49,7 +49,6 @@ class MenuScreen:
             sys.exit()
 
     def draw_traces(self, screen):
-        # decorative circuit traces
         color = (78, 36, 118)
         for y, x0, x1 in ((120, 0, 420), (200, 0, 300), (780, 1180, 1600), (840, 1300, 1600)):
             pg.draw.line(screen, color, (x0, y), (x1, y), 6)
@@ -61,8 +60,6 @@ class MenuScreen:
         screen = self.game.screen
         screen.fill(BG)
         self.draw_traces(screen)
-
-        # pulsing LED above the title
         pulse = 0.5 + 0.5 * math.sin(pg.time.get_ticks() / 400)
         glow = pg.Surface((200, 200), pg.SRCALPHA)
         pg.draw.circle(glow, (255, 90, 90, int(50 + 70 * pulse)), (100, 100), 90)
@@ -122,12 +119,12 @@ class InstructionsScreen:
                 screen.blit(self.small_font.render(line, True, LILAC), (x, y))
                 y += 32
 
-        # tip for this stage
+
         for line in QuizScreen.wrap('TIP: ' + game.circuit['hint'], self.tiny_font, width)[:2]:
             screen.blit(self.tiny_font.render(line, True, GOLD), (x, y + 6))
             y += 26
 
-        # parts you need to find (decoys may be among them)
+
         counts = Counter(game.circuit['parts'])
         y = max(y + 14, 520)
         slot_w = width // len(counts)

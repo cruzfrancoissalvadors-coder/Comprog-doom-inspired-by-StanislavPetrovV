@@ -31,7 +31,6 @@ class ObjectRenderer:
 
     def draw_crosshair(self, size=12, gap=5, color=(255, 255, 255)):
         cx, cy = HALF_WIDTH, HALF_HEIGHT
-        # dark outline first so it stays visible on light walls
         for c, w in (((0, 0, 0), 4), (color, 2)):
             pg.draw.line(self.screen, c, (cx - gap - size, cy), (cx - gap, cy), w)  # left
             pg.draw.line(self.screen, c, (cx + gap, cy), (cx + gap + size, cy), w)  # right
@@ -108,7 +107,7 @@ class ObjectRenderer:
     def draw_background(self):
         horizon = HALF_HEIGHT + int(self.game.player.pitch)
         self.sky_offset = (self.sky_offset + 4.5 * self.game.player.rel) % WIDTH
-        sky_y = horizon - self.sky_image.get_height()  # sky bottom edge sits on the horizon
+        sky_y = horizon - self.sky_image.get_height()
         self.screen.blit(self.sky_image, (-self.sky_offset, sky_y))
         self.screen.blit(self.sky_image, (-self.sky_offset + WIDTH, sky_y))
         # floor
